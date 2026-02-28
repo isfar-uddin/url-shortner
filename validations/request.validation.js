@@ -10,3 +10,10 @@ export const signupSchema = z.object({
     .string({ message: "Password is required" })
     .min(8, { message: "Password must be at least 8 characters" }),
 });
+
+export const signinSchema = z.object({
+  email: z.email({ message: "Email is required" }),
+  password: z
+    .string({ message: "Password is required" })
+    .min(8, { message: "Password must be at least 8 characters" }),
+});
