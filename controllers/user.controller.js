@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import { hashPasswordWithSalt } from "../utils/hash.js";
 import { getUserByEmail } from "../services/user.service.js";
 import {
@@ -7,9 +6,10 @@ import {
 } from "../validations/request.validation.js";
 import { db } from "../db/index.js";
 import { usersTable } from "../models/user.model.js";
+import { generateToken } from "../utils/token.js";
 
 export const signup = async (req, res) => {
-  const validationResult = await signupSchema.safeParseAsync(req.body);
+  const validationResult = signupSchema.safeParse(req.body);
 
   if (validationResult.error) {
     return res.status(400).json({
@@ -52,7 +52,7 @@ export const signup = async (req, res) => {
 };
 
 export const signin = async (req, res) => {
-  const validationResult = await signinSchema.safeParseAsync(req.body);
+  const validationResult = signinSchema.safeParse(req.body);
 
   if (validationResult.error) {
     return res.status(400).json({
@@ -84,10 +84,10 @@ export const signin = async (req, res) => {
     });
   }
 
-  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+  const token = generateToken({ id: user.id });
 
   res.status(200).json({
-    message: "Login successful",
+    message: "Signin successful",
     success: true,
     data: { token },
   });
