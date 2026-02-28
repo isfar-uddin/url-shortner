@@ -3,7 +3,7 @@ import { verifyToken } from "../utils/token.js";
 export const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    return res.status(401).json({ error: "Unauthorized", success: false });
+    return res.status(401).json({ error: "No authorization header provided", success: false });
   }
 
   if (!authHeader.startsWith("Bearer ")) {
@@ -16,7 +16,7 @@ export const authMiddleware = (req, res, next) => {
   const [_, token] = authHeader.split(" ");
 
   if (!token) {
-    return res.status(401).json({ error: "Unauthorized", success: false });
+    return res.status(401).json({ error: "Token is required", success: false });
   }
 
   try {
@@ -24,6 +24,6 @@ export const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Unauthorized", success: false });
+    return res.status(401).json({ error: "Invalid token", success: false });
   }
 };
