@@ -33,3 +33,11 @@ export const getUrlByShortUrl = async ({ shortUrl }) => {
 
   return urlData;
 };
+
+export const getUrlsByUserId = async ({ userId }) => {
+  const urls = await db
+    .select()
+    .from(urlsTable)
+    .where(eq(urlsTable.userId, userId));
+  return urls;
+};

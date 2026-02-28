@@ -1,6 +1,10 @@
 import { nanoid } from "nanoid";
 import { shortenUrlSchema } from "../validations/request.validation.js";
-import { createUrl, getUrlByShortUrl } from "../services/url.service.js";
+import {
+  createUrl,
+  getUrlByShortUrl,
+  getUrlsByUserId,
+} from "../services/url.service.js";
 
 export const shortenUrl = async (req, res) => {
   const validationResult = shortenUrlSchema.safeParse(req.body);
@@ -35,8 +39,6 @@ export const redirectToOriginalUrl = async (req, res) => {
 
   const urlData = await getUrlByShortUrl({ shortUrl });
 
-  console.log("urlData: ", urlData);
-
   if (!urlData) {
     return res.status(404).json({
       error: "URL not found",
@@ -45,4 +47,16 @@ export const redirectToOriginalUrl = async (req, res) => {
   }
 
   res.status(302).redirect(urlData.originalUrl);
+};
+
+export const getAllUrls = async (req, res) => {
+  const { id } = req.user;
+
+  const urls = await getUrlsByUserId({ userId: id });
+
+  res.status(200).json({
+    message: "URLs fetched successfully",
+    success: true,
+    data: urls,
+  });
 };
