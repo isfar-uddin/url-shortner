@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
-import { db } from "../db/index.js";
-import { usersTable } from "../models/index.js";
-import { signupSchema } from "../validations/request.validation.js";
 import { hashPasswordWithSalt } from "../utils/hash.js";
+import { getUserByEmail } from "../services/user.service.js";
+import { signupSchema } from "../validations/request.validation.js";
+import { db } from "../db/index.js";
+import { usersTable } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
   const validationResult = await signupSchema.safeParseAsync(req.body);
@@ -16,12 +16,9 @@ export const signup = async (req, res) => {
 
   const { firstName, lastName, email, password } = validationResult.data;
 
-  const existingUser = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, email));
+  const existingUser = await getUserByEmail(email);
 
-  if (existingUser.length > 0) {
+  if (existingUser) {
     return res.status(400).json({
       message: `User with email ${email} already exists`,
       success: false,
