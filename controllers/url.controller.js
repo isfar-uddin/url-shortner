@@ -4,6 +4,7 @@ import {
   createUrl,
   getUrlByShortUrl,
   getUrlsByUserId,
+  deleteUrlByIdService,
 } from "../services/url.service.js";
 
 export const shortenUrl = async (req, res) => {
@@ -58,5 +59,23 @@ export const getAllUrls = async (req, res) => {
     message: "URLs fetched successfully",
     success: true,
     data: urls,
+  });
+};
+
+export const deleteUrlById = async (req, res) => {
+  const { id } = req.params;
+
+  const result = await deleteUrlByIdService({ id, userId: req.user.id });
+
+  if (!result) {
+    return res.status(404).json({
+      error: "Failed to delete URL",
+      success: false,
+    });
+  }
+
+  res.status(200).json({
+    message: "URL deleted successfully",
+    success: true,
   });
 };
